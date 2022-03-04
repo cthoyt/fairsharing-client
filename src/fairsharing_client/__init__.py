@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""A client to the FAIRsharing API"""
+"""A client to the FAIRsharing API."""
 
 from .api import FairsharingClient, ensure_fairsharing, load_fairsharing
 

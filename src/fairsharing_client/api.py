@@ -120,7 +120,7 @@ class FairsharingClient:
                 tqdm.write(f"{record['id']} has no DOI: {record['url']}")
             return None
         elif doi.startswith("10.25504/"):
-            record["prefix"] = record.pop("doi")[len("10.25504/"):]
+            record["prefix"] = record.pop("doi")[len("10.25504/") :]
         else:
             tqdm.write(f"DOI has unexpected prefix: {record['doi']}")
 
@@ -148,7 +148,7 @@ def _removeprefix(s: Optional[str], prefix) -> Optional[str]:
     if s is None:
         return None
     if s.startswith(prefix):
-        return s[len(prefix):]
+        return s[len(prefix) :]
     return s
 
 
