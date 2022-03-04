@@ -38,11 +38,13 @@
     </a>
 </p>
 
-A client to the FAIRsharing API.
+A client to the [FAIRsharing API](https://beta.fairsharing.org/API_doc).
 
 ## 💪 Getting Started
 
-There are two aspects to FAIRsharing's data that make it difficult to use:
+FAIRsharing is a registry of high-quality metadata about standards, databases,
+and policies. However, there are two aspects to FAIRsharing's data that make it
+difficult to use:
 
 1. It's licensed under the restrictive CC-BY-SA 4.0 license (
    see https://fairsharing.org/licence). This makes it difficult to redistribute
