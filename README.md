@@ -59,16 +59,21 @@ programmatic access inconvenient for less seasoned programmers.
 The `fairsharing_client` package provides a way to automatically bulk download
 all contents from the API and store them locally in a reproducible way, so you
 can write code that relies on FAIRsharing data without having to worry about how
-to interact with its API nor redistribute its data yourself.
+to interact with its API nor redistribute its data yourself. Further,
+this package does some preprocessing on the content to make it more useful.
 
 ```python
 import fairsharing_client as fc
 
 # Download the data and return the path of the YAML file
+# This takes about 4 minutes and gets around 4K records.
 path = fc.ensure_fairsharing()
 
 # Download the data and open it for use
 data = fc.load_fairsharing() 
+
+# Get data for a given record
+chebi_record = data["FAIRsharing.62qk8w"]
 ```
 
 There are a few ways to do authentication:
