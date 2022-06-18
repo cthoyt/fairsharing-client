@@ -21,8 +21,8 @@
     <a href="https://github.com/cthoyt/fairsharing-client/blob/main/LICENSE">
         <img alt="PyPI - License" src="https://img.shields.io/pypi/l/fairsharing_client" />
     </a>
-    <a href='https://fairsharing_client.readthedocs.io/en/latest/?badge=latest'>
-        <img src='https://readthedocs.org/projects/fairsharing_client/badge/?version=latest' alt='Documentation Status' />
+    <a href='https://fairsharing-client.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/fairsharing-client/badge/?version=latest' alt='Documentation Status' />
     </a>
     <a href="https://codecov.io/gh/cthoyt/fairsharing-client/branch/main">
         <img src="https://codecov.io/gh/cthoyt/fairsharing-client/branch/main/graph/badge.svg" alt="Codecov status" />
