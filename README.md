@@ -46,13 +46,13 @@ FAIRsharing is a registry of high-quality metadata about standards, databases,
 and policies. However, there are two aspects to FAIRsharing's data that make it
 difficult to use:
 
-1. It's licensed under the restrictive CC-BY-SA 4.0 license (
+1. It's licensed under the restrictive [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license (
    see https://fairsharing.org/licence). This makes it difficult to redistribute
-   the data, even in part. Better options for community reuse are CC-BY 4.0 or
-   ideally CC 0. However, keep in mind that FAIR and Open are emphatically not
-   the same thing.
+   the data, even in part. Better options for community reuse are [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) or
+   ideally [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/). However, keep in mind that FAIR and Open are emphatically
+   [not the same thing](https://www.go-fair.org/resources/faq/ask-question-difference-fair-data-open-data/).
 2. Instead of offering a bulk download, there is an API that requires
-   authentication using JWT.
+   authentication using [JWT](https://jwt.io).
 
 While there's nothing wrong with JWT, it requires several steps that make
 programmatic access inconvenient for less seasoned programmers.
