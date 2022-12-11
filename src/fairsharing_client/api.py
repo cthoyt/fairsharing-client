@@ -5,11 +5,12 @@
 .. seealso:: https://beta.fairsharing.org/API_doc
 """
 
+import json
+from pathlib import Path
 from typing import Any, Iterable, Mapping, MutableMapping, Optional
 
 import pystow
 import requests
-import yaml
 from tqdm import tqdm
 
 __all__ = [
@@ -18,17 +19,16 @@ __all__ = [
     "FairsharingClient",
 ]
 
-PATH = pystow.join("bio", "fairsharing", name="fairsharing.yaml")
+PATH = pystow.join("bio", "fairsharing", name="fairsharing.json")
 
 
 def load_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs):
     """Get the FAIRsharing registry."""
     path = ensure_fairsharing(force_download=force_download, use_tqdm=use_tqdm, **kwargs)
-    with path.open() as file:
-        return yaml.safe_load(file)
+    return json.loads(path.read_text())
 
 
-def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs):
+def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs) -> Path:
     """Get the FAIRsharing registry."""
     if PATH.exists() and not force_download:
         return PATH
@@ -36,7 +36,7 @@ def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kw
     client = FairsharingClient(**kwargs)
     # As of 2021-12-13, there are a bit less than 4k records that take about 3 minutes to download
     rv = {
-        row["prefix"]: row
+        row.pop("fairsharing_id"): row
         for row in tqdm(
             client.iter_records(),
             unit_scale=True,
@@ -45,14 +45,15 @@ def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kw
             disable=not use_tqdm,
         )
     }
-    with PATH.open("w") as file:
-        yaml.safe_dump(rv, file, allow_unicode=True, sort_keys=True)
+
+    PATH.write_text(json.dumps(rv, ensure_ascii=False, indent=2, sort_keys=True))
     return PATH
 
 
 # These fields are the same in each record
 REDUNDANT_FIELDS = {
-    "fairsharing-licence",
+    "fairsharing_licence",
+    "type",
 }
 
 
@@ -106,12 +107,10 @@ class FairsharingClient:
         yield from self._iter_records_helper(self.records_url)
 
     def _preprocess_record(
-        self, record: MutableMapping[str, Any]
+        self, in_record: MutableMapping[str, Any]
     ) -> Optional[MutableMapping[str, Any]]:
-        if "type" in record:
-            del record["type"]
-        record = {"id": record["id"], **record["attributes"]}
-
+        attributes = in_record.pop("attributes")
+        record = {**in_record, **attributes}
         doi = record.get("doi")
         if doi is None:
             # Records without a DOI can't be resolved
@@ -120,7 +119,7 @@ class FairsharingClient:
                 tqdm.write(f"{record['id']} has no DOI: {record['url']}")
             return None
         elif doi.startswith("10.25504/"):
-            record["prefix"] = record.pop("doi")[len("10.25504/") :]
+            record["fairsharing_id"] = _removeprefix(doi, "10.25504/")
         else:
             tqdm.write(f"DOI has unexpected prefix: {record['doi']}")
 
@@ -142,7 +141,6 @@ class FairsharingClient:
         next_url = res["links"].get("next")
         if next_url:
             yield from self._iter_records_helper(next_url)
-
 
 def _removeprefix(s: Optional[str], prefix) -> Optional[str]:
     if s is None:
