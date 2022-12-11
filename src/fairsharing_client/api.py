@@ -142,6 +142,7 @@ class FairsharingClient:
         if next_url:
             yield from self._iter_records_helper(next_url)
 
+
 def _removeprefix(s: Optional[str], prefix) -> Optional[str]:
     if s is None:
         return None

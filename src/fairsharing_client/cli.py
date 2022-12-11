@@ -8,8 +8,9 @@ import click
 def main(force: bool):
     """Download the FAIRsharing data."""
     from fairsharing_client import ensure_fairsharing
+
     ensure_fairsharing(force_download=force)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
