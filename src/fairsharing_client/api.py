@@ -6,8 +6,9 @@
 """
 
 import json
+from collections import defaultdict
 from pathlib import Path
-from typing import Any, Iterable, Mapping, MutableMapping, Optional
+from typing import Any, Iterable, MutableMapping, Optional
 
 import pystow
 import requests
@@ -17,6 +18,7 @@ __all__ = [
     "ensure_fairsharing",
     "load_fairsharing",
     "FairsharingClient",
+    "get_fairsharing_to_orcids",
 ]
 
 PATH = pystow.join("bio", "fairsharing", name="fairsharing.json")
@@ -102,7 +104,7 @@ class FairsharingClient:
         res = requests.post(self.signin_url, json=payload).json()
         return res["jwt"]
 
-    def iter_records(self) -> Iterable[Mapping[str, Any]]:
+    def iter_records(self) -> Iterable[MutableMapping[str, Any]]:
         """Iterate over all FAIRsharing records."""
         yield from self._iter_records_helper(self.records_url)
 
@@ -132,7 +134,7 @@ class FairsharingClient:
                 del record[key]
         return record
 
-    def _iter_records_helper(self, url: str) -> Iterable[Mapping[str, Any]]:
+    def _iter_records_helper(self, url: str) -> Iterable[MutableMapping[str, Any]]:
         res = self.session.get(url).json()
         for record in res["data"]:
             yv = self._preprocess_record(record)
@@ -149,6 +151,24 @@ def _removeprefix(s: Optional[str], prefix) -> Optional[str]:
     if s.startswith(prefix):
         return s[len(prefix) :]
     return s
+
+
+def get_fairsharing_to_orcids() -> dict[str, set[str]]:
+    """Get links from FAIRsharing IDs to sets of ORCID ids for people working on/credited."""
+    from orcid_downloader import ground_researcher_unambiguous
+
+    rv = defaultdict(set)
+    rr = load_fairsharing()
+    for fairsharing_id, record in rr.items():
+        for contact in (record.get("metadata") or {}).get("contacts", []):
+            orcid = contact.get("contact_orcid")
+            name = contact.get("contact_name")
+            if orcid:
+                rv[fairsharing_id].add(orcid)
+            elif name and (orcid := ground_researcher_unambiguous(name)):
+                rv[fairsharing_id].add(orcid)
+
+    return dict(rv)
 
 
 if __name__ == "__main__":
