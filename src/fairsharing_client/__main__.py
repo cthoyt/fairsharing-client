@@ -1,4 +1,4 @@
-"""A CLI for the FAIRsharing client."""
+"""Entrypoint module, in case you use `python -m fairsharing_client`."""
 
 from .cli import main
 

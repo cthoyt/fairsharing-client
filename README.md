@@ -9,103 +9,77 @@
 </h1>
 
 <p align="center">
-    <a href="https://github.com/cthoyt/fairsharing-client/actions?query=workflow%3ATests">
-        <img alt="Tests" src="https://github.com/cthoyt/fairsharing-client/workflows/Tests/badge.svg" />
-    </a>
+    <a href="https://github.com/cthoyt/fairsharing-client/actions/workflows/tests.yml">
+        <img alt="Tests" src="https://github.com/cthoyt/fairsharing-client/actions/workflows/tests.yml/badge.svg" /></a>
     <a href="https://pypi.org/project/fairsharing_client">
-        <img alt="PyPI" src="https://img.shields.io/pypi/v/fairsharing_client" />
-    </a>
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/fairsharing_client" /></a>
     <a href="https://pypi.org/project/fairsharing_client">
-        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fairsharing_client" />
-    </a>
+        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/fairsharing_client" /></a>
     <a href="https://github.com/cthoyt/fairsharing-client/blob/main/LICENSE">
-        <img alt="PyPI - License" src="https://img.shields.io/pypi/l/fairsharing_client" />
-    </a>
-    <a href='https://fairsharing-client.readthedocs.io/en/latest/?badge=latest'>
-        <img src='https://readthedocs.org/projects/fairsharing-client/badge/?version=latest' alt='Documentation Status' />
-    </a>
+        <img alt="PyPI - License" src="https://img.shields.io/pypi/l/fairsharing_client" /></a>
+    <a href='https://fairsharing_client.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/fairsharing_client/badge/?version=latest' alt='Documentation Status' /></a>
     <a href="https://codecov.io/gh/cthoyt/fairsharing-client/branch/main">
-        <img src="https://codecov.io/gh/cthoyt/fairsharing-client/branch/main/graph/badge.svg" alt="Codecov status" />
-    </a>  
+        <img src="https://codecov.io/gh/cthoyt/fairsharing-client/branch/main/graph/badge.svg" alt="Codecov status" /></a>  
     <a href="https://github.com/cthoyt/cookiecutter-python-package">
-        <img alt="Cookiecutter template from @cthoyt" src="https://img.shields.io/badge/Cookiecutter-snekpack-blue" /> 
-    </a>
-    <a href='https://github.com/psf/black'>
-        <img src='https://img.shields.io/badge/code%20style-black-000000.svg' alt='Code style: black' />
-    </a>
+        <img alt="Cookiecutter template from @cthoyt" src="https://img.shields.io/badge/Cookiecutter-snekpack-blue" /></a>
+    <a href="https://github.com/astral-sh/ruff">
+        <img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" alt="Ruff" style="max-width:100%;"></a>
     <a href="https://github.com/cthoyt/fairsharing-client/blob/main/.github/CODE_OF_CONDUCT.md">
-        <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant"/>
-    </a>
+        <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant"/></a>
+    <!-- uncomment if you archive on zenodo
+    <a href="https://zenodo.org/badge/latestdoi/XXXXXX">
+        <img src="https://zenodo.org/badge/XXXXXX.svg" alt="DOI"></a>
+    -->
 </p>
 
-A client to the [FAIRsharing API](https://beta.fairsharing.org/API_doc).
+A client to the FAIRsharing API.
 
 ## 💪 Getting Started
 
-FAIRsharing is a registry of high-quality metadata about standards, databases,
-and policies. However, there are two aspects to FAIRsharing's data that make it
-difficult to use:
+> TODO show in a very small amount of space the **MOST** useful thing your
+> package can do. Make it as short as possible! You have an entire set of docs
+> for later.
 
-1. It's licensed under the restrictive [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) license (
-   see https://fairsharing.org/licence). This makes it difficult to redistribute
-   the data, even in part. Better options for community reuse are [CC-BY 4.0](https://creativecommons.org/licenses/by/4.0/) or
-   ideally [CC0](https://creativecommons.org/share-your-work/public-domain/cc0/). However, keep in mind that FAIR and Open are emphatically
-   [not the same thing](https://www.go-fair.org/resources/faq/ask-question-difference-fair-data-open-data/).
-2. Instead of offering a bulk download, there is an API that requires
-   authentication using [JWT](https://jwt.io).
+### Command Line Interface
 
-While there's nothing wrong with JWT, it requires several steps that make
-programmatic access inconvenient for less seasoned programmers.
-The `fairsharing_client` package provides a way to automatically bulk download
-all contents from the API and store them locally in a reproducible way, so you
-can write code that relies on FAIRsharing data without having to worry about how
-to interact with its API nor redistribute its data yourself. Further,
-this package does some preprocessing on the content to make it more useful.
+The `fairsharing_client` command line tool is automatically installed. It can be
+used from the console with the `--help` flag to show all subcommands:
 
-```python
-import fairsharing_client as fc
-
-# Download the data and return the path of the YAML file
-# This takes about 4 minutes and gets around 4K records.
-path = fc.ensure_fairsharing()
-
-# Download the data and open it for use
-data = fc.load_fairsharing() 
-
-# Get data for a given record
-chebi_record = data["FAIRsharing.62qk8w"]
+```console
+$ fairsharing_client --help
 ```
 
-There are a few ways to do authentication:
-
-1. **Envionment Variables**: set the `FAIRSHARING_LOGIN`
-   and `FAIRSHARING_PASSWORD` envionrment variables
-2. **Configuration**: in the `~/.config/fairshairing.ini` file, add the
-   following configuration:
-   ```ini
-   [fairsharing]
-   login = cthoyt@gmail.com
-   password = ...
-   ```
-3. **Keyword arguments**: pass the `login` and `password` keywords to either of
-   the example functions.
-
-A reminder: this repository does NOT redistribute FAIRsharing's data, it only
-provides code for you to get it yourself.
+> TODO show the most useful thing the CLI does! The CLI will have documentation
+> auto-generated by `sphinx`.
 
 ## 🚀 Installation
 
+<!-- Uncomment this section after your first ``tox -e finish``
 The most recent release can be installed from
-[PyPI](https://pypi.org/project/fairsharing_client/) with:
+[PyPI](https://pypi.org/project/fairsharing_client/) with uv:
 
-```bash
-$ pip install fairsharing_client
+```console
+$ uv pip install fairsharing_client
 ```
 
-The most recent code and data can be installed directly from GitHub with:
+or with pip:
 
-```bash
-$ pip install git+https://github.com/cthoyt/fairsharing-client.git
+```console
+$ python3 -m pip install fairsharing_client
+```
+-->
+
+The most recent code and data can be installed directly from GitHub with uv:
+
+```console
+$ uv pip install git+https://github.com/cthoyt/fairsharing-client.git
+```
+
+or with pip:
+
+```console
+$ python3 -m pip install git+https://github.com/cthoyt/fairsharing-client.git
 ```
 
 ## 👐 Contributing
@@ -121,12 +95,37 @@ for more information on getting involved.
 
 The code in this package is licensed under the MIT License.
 
+<!--
+### 📖 Citation
+
+Citation goes here!
+-->
+
+<!--
+### 🎁 Support
+
+This project has been supported by the following organizations (in alphabetical order):
+
+- [Biopragmatics Lab](https://biopragmatics.github.io)
+
+-->
+
+<!--
+### 💰 Funding
+
+This project has been supported by the following grants:
+
+| Funding Body  | Program                                                      | Grant Number |
+|---------------|--------------------------------------------------------------|--------------|
+| Funder        | [Grant Name (GRANT-ACRONYM)](https://example.com/grant-link) | ABCXYZ       |
+-->
+
 ### 🍪 Cookiecutter
 
-This package was created
-with [@audreyfeldroy](https://github.com/audreyfeldroy)'s
-[cookiecutter](https://github.com/cookiecutter/cookiecutter) package
-using [@cthoyt](https://github.com/cthoyt)'s
+This package was created with
+[@audreyfeldroy](https://github.com/audreyfeldroy)'s
+[cookiecutter](https://github.com/cookiecutter/cookiecutter) package using
+[@cthoyt](https://github.com/cthoyt)'s
 [cookiecutter-snekpack](https://github.com/cthoyt/cookiecutter-snekpack)
 template.
 
@@ -135,7 +134,6 @@ template.
 <details>
   <summary>See developer instructions</summary>
 
-
 The final section of the README is for if you want to get involved by making a
 code contribution.
 
@@ -143,67 +141,180 @@ code contribution.
 
 To install in development mode, use the following:
 
-```bash
+```console
 $ git clone git+https://github.com/cthoyt/fairsharing-client.git
 $ cd fairsharing-client
-$ pip install -e .
+$ uv pip install -e .
+```
+
+Alternatively, install using pip:
+
+```console
+$ python3 -m pip install -e .
 ```
 
 ### 🥼 Testing
 
-After cloning the repository and installing `tox` with `pip install tox`, the
+After cloning the repository and installing `tox` with
+`uv tool install tox --with tox-uv` or `python3 -m pip install tox tox-uv`, the
 unit tests in the `tests/` folder can be run reproducibly with:
 
-```shell
-$ tox
+```console
+$ tox -e py
 ```
 
-Additionally, these tests are automatically re-run with each commit in
-a [GitHub Action](https://github.com/cthoyt/fairsharing-client/actions?query=workflow%3ATests)
-.
+Additionally, these tests are automatically re-run with each commit in a
+[GitHub Action](https://github.com/cthoyt/fairsharing-client/actions?query=workflow%3ATests).
 
 ### 📖 Building the Documentation
 
 The documentation can be built locally using the following:
 
-```shell
+```console
 $ git clone git+https://github.com/cthoyt/fairsharing-client.git
 $ cd fairsharing-client
 $ tox -e docs
 $ open docs/build/html/index.html
-``` 
+```
 
-The documentation automatically installs the package as well as the `docs`
-extra specified in the [`setup.cfg`](setup.cfg). `sphinx` plugins like `texext`
-can be added there. Additionally, they need to be added to the
+The documentation automatically installs the package as well as the `docs` extra
+specified in the [`pyproject.toml`](pyproject.toml). `sphinx` plugins like
+`texext` can be added there. Additionally, they need to be added to the
 `extensions` list in [`docs/source/conf.py`](docs/source/conf.py).
+
+The documentation can be deployed to [ReadTheDocs](https://readthedocs.io) using
+[this guide](https://docs.readthedocs.io/en/stable/intro/import-guide.html). The
+[`.readthedocs.yml`](.readthedocs.yml) YAML file contains all the configuration
+you'll need. You can also set up continuous integration on GitHub to check not
+only that Sphinx can build the documentation in an isolated environment (i.e.,
+with `tox -e docs-test`) but also that
+[ReadTheDocs can build it too](https://docs.readthedocs.io/en/stable/pull-requests.html).
+
+</details>
+
+## 🧑‍💻 For Maintainers
+
+<details>
+  <summary>See maintainer instructions</summary>
+
+### Initial Configuration
+
+#### Configuring ReadTheDocs
+
+[ReadTheDocs](https://readthedocs.org) is an external documentation hosting
+service that integrates with GitHub's CI/CD. Do the following for each
+repository:
+
+1. Log in to ReadTheDocs with your GitHub account to install the integration at
+   https://readthedocs.org/accounts/login/?next=/dashboard/
+2. Import your project by navigating to https://readthedocs.org/dashboard/import
+   then clicking the plus icon next to your repository
+3. You can rename the repository on the next screen using a more stylized name
+   (i.e., with spaces and capital letters)
+4. Click next, and you're good to go!
+
+#### Configuring Archival on Zenodo
+
+[Zenodo](https://zenodo.org) is a long-term archival system that assigns a DOI
+to each release of your package. Do the following for each repository:
+
+1. Log in to Zenodo via GitHub with this link:
+   https://zenodo.org/oauth/login/github/?next=%2F. This brings you to a page
+   that lists all of your organizations and asks you to approve installing the
+   Zenodo app on GitHub. Click "grant" next to any organizations you want to
+   enable the integration for, then click the big green "approve" button. This
+   step only needs to be done once.
+2. Navigate to https://zenodo.org/account/settings/github/, which lists all of
+   your GitHub repositories (both in your username and any organizations you
+   enabled). Click the on/off toggle for any relevant repositories. When you
+   make a new repository, you'll have to come back to this
+
+After these steps, you're ready to go! After you make "release" on GitHub (steps
+for this are below), you can navigate to
+https://zenodo.org/account/settings/github/repository/cthoyt/fairsharing-client
+to see the DOI for the release and link to the Zenodo record for it.
+
+#### Registering with the Python Package Index (PyPI)
+
+The [Python Package Index (PyPI)](https://pypi.org) hosts packages so they can
+be easily installed with `pip`, `uv`, and equivalent tools.
+
+1. Register for an account [here](https://pypi.org/account/register)
+2. Navigate to https://pypi.org/manage/account and make sure you have verified
+   your email address. A verification email might not have been sent by default,
+   so you might have to click the "options" dropdown next to your address to get
+   to the "re-send verification email" button
+3. 2-Factor authentication is required for PyPI since the end of 2023 (see this
+   [blog post from PyPI](https://blog.pypi.org/posts/2023-05-25-securing-pypi-with-2fa/)).
+   This means you have to first issue account recovery codes, then set up
+   2-factor authentication
+4. Issue an API token from https://pypi.org/manage/account/token
+
+This only needs to be done once per developer.
+
+#### Configuring your machine's connection to PyPI
+
+This needs to be done once per machine.
+
+```console
+$ uv tool install keyring
+$ keyring set https://upload.pypi.org/legacy/ __token__
+$ keyring set https://test.pypi.org/legacy/ __token__
+```
+
+Note that this deprecates previous workflows using `.pypirc`.
 
 ### 📦 Making a Release
 
-After installing the package in development mode and installing
-`tox` with `pip install tox`, the commands for making a new release are
-contained within the `finish` environment in `tox.ini`. Run the following from
-the shell:
+#### Uploading to PyPI
 
-```shell
+After installing the package in development mode and installing `tox` with
+`uv tool install tox --with tox-uv` or `python3 -m pip install tox tox-uv`, run
+the following from the console:
+
+```console
 $ tox -e finish
 ```
 
 This script does the following:
 
-1. Uses [Bump2Version](https://github.com/c4urself/bump2version) to switch the
-   version number in the `setup.cfg`,
-   `src/fairsharing_client/version.py`,
-   and [`docs/source/conf.py`](docs/source/conf.py) to not have the `-dev`
-   suffix
-2. Packages the code in both a tar archive and a wheel
-   using [`build`](https://github.com/pypa/build)
-3. Uploads to PyPI using [`twine`](https://github.com/pypa/twine). Be sure to
-   have a `.pypirc` file configured to avoid the need for manual input at this
-   step
+1. Uses [bump-my-version](https://github.com/callowayproject/bump-my-version) to
+   switch the version number in the `pyproject.toml`, `CITATION.cff`,
+   `src/fairsharing_client/version.py`, and
+   [`docs/source/conf.py`](docs/source/conf.py) to not have the `-dev` suffix
+2. Packages the code in both a tar archive and a wheel using
+   [`uv build`](https://docs.astral.sh/uv/guides/publish/#building-your-package)
+3. Uploads to PyPI using
+   [`uv publish`](https://docs.astral.sh/uv/guides/publish/#publishing-your-package).
 4. Push to GitHub. You'll need to make a release going with the commit where the
    version was bumped.
 5. Bump the version to the next patch. If you made big changes and want to bump
-   the version by minor, you can use `tox -e bumpversion minor` after.
+   the version by minor, you can use `tox -e bumpversion -- minor` after.
+
+#### Releasing on GitHub
+
+1. Navigate to https://github.com/cthoyt/fairsharing-client/releases/new to
+   draft a new release
+2. Click the "Choose a Tag" dropdown and select the tag corresponding to the
+   release you just made
+3. Click the "Generate Release Notes" button to get a quick outline of recent
+   changes. Modify the title and description as you see fit
+4. Click the big green "Publish Release" button
+
+This will trigger Zenodo to assign a DOI to your release as well.
+
+### Updating Package Boilerplate
+
+This project uses `cruft` to keep boilerplate (i.e., configuration, contribution
+guidelines, documentation configuration) up-to-date with the upstream
+cookiecutter package. Install cruft with either `uv tool install cruft` or
+`python3 -m pip install cruft` then run:
+
+```console
+$ cruft update
+```
+
+More info on Cruft's update command is available
+[here](https://github.com/cruft/cruft?tab=readme-ov-file#updating-a-project).
 
 </details>

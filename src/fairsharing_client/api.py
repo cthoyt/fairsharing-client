@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Access to FAIRsharing via its API.
 
 .. seealso:: https://beta.fairsharing.org/API_doc
@@ -7,30 +5,31 @@
 
 import json
 from collections import defaultdict
+from collections.abc import Iterable, MutableMapping
 from pathlib import Path
-from typing import Any, Iterable, MutableMapping, Optional
+from typing import Any, cast
 
 import pystow
 import requests
 from tqdm import tqdm
 
 __all__ = [
-    "ensure_fairsharing",
-    "load_fairsharing",
     "FairsharingClient",
+    "ensure_fairsharing",
     "get_fairsharing_to_orcids",
+    "load_fairsharing",
 ]
 
 PATH = pystow.join("bio", "fairsharing", name="fairsharing.json")
 
 
-def load_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs):
+def load_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs: Any) -> Any:
     """Get the FAIRsharing registry."""
     path = ensure_fairsharing(force_download=force_download, use_tqdm=use_tqdm, **kwargs)
     return json.loads(path.read_text())
 
 
-def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs) -> Path:
+def ensure_fairsharing(force_download: bool = False, use_tqdm: bool = True, **kwargs: Any) -> Path:
     """Get the FAIRsharing registry."""
     if PATH.exists() and not force_download:
         return PATH
@@ -64,10 +63,10 @@ class FairsharingClient:
 
     def __init__(
         self,
-        login: Optional[str] = None,
-        password: Optional[str] = None,
-        base_url: Optional[str] = None,
-    ):
+        login: str | None = None,
+        password: str | None = None,
+        base_url: str | None = None,
+    ) -> None:
         """Instantiate the client and get an appropriate JWT token.
 
         :param login: FAIRsharing username
@@ -101,13 +100,14 @@ class FairsharingClient:
                 "password": self.password,
             },
         }
-        res = requests.post(self.signin_url, json=payload)
+        res = requests.post(self.signin_url, json=payload, timeout=10)
         res.raise_for_status()
         res_json = res.json()
         if jwt := res_json.get("jwt"):
-            return jwt
+            return cast(str, jwt)
         raise ValueError(
-            f"could not get JWT, are your login details right? Response from FAIRsharing:\n\n  {res_json}\n"
+            f"could not get JWT, are your login details right? "
+            f"Response from FAIRsharing:\n\n  {res_json}\n"
         )
 
     def iter_records(self) -> Iterable[MutableMapping[str, Any]]:
@@ -116,7 +116,7 @@ class FairsharingClient:
 
     def _preprocess_record(
         self, in_record: MutableMapping[str, Any]
-    ) -> Optional[MutableMapping[str, Any]]:
+    ) -> MutableMapping[str, Any] | None:
         attributes = in_record.pop("attributes")
         record = {**in_record, **attributes}
         doi = record.get("doi")
@@ -136,8 +136,7 @@ class FairsharingClient:
         )
         record["name"] = _removeprefix(record.get("name"), "FAIRsharing record for: ")
         for key in REDUNDANT_FIELDS:
-            if key in record:
-                del record[key]
+            record.pop(key, None)
         return record
 
     def _iter_records_helper(self, url: str) -> Iterable[MutableMapping[str, Any]]:
@@ -146,7 +145,8 @@ class FairsharingClient:
         res_json = res.json()
         if "data" not in res_json or "links" not in res_json:
             raise ValueError(
-                f"no data returned, are your login details right? Response from FAIRsharing:\n\n  {res_json}\n"
+                f"no data returned, are your login details right? "
+                f"Response from FAIRsharing:\n\n  {res_json}\n"
             )
         for record in res_json["data"]:
             yv = self._preprocess_record(record)
@@ -157,7 +157,7 @@ class FairsharingClient:
             yield from self._iter_records_helper(next_url)
 
 
-def _removeprefix(s: Optional[str], prefix) -> Optional[str]:
+def _removeprefix(s: str | None, prefix: str) -> str | None:
     if s is None:
         return None
     if s.startswith(prefix):
