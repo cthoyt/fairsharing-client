@@ -101,8 +101,14 @@ class FairsharingClient:
                 "password": self.password,
             },
         }
-        res = requests.post(self.signin_url, json=payload).json()
-        return res["jwt"]
+        res = requests.post(self.signin_url, json=payload)
+        res.raise_for_status()
+        res_json = res.json()
+        if jwt := res_json.get("jwt"):
+            return jwt
+        raise ValueError(
+            f"could not get JWT, are your login details right? Response from FAIRsharing:\n\n  {res_json}\n"
+        )
 
     def iter_records(self) -> Iterable[MutableMapping[str, Any]]:
         """Iterate over all FAIRsharing records."""
@@ -135,8 +141,14 @@ class FairsharingClient:
         return record
 
     def _iter_records_helper(self, url: str) -> Iterable[MutableMapping[str, Any]]:
-        res = self.session.get(url).json()
-        for record in res["data"]:
+        res = self.session.get(url)
+        res.raise_for_status()
+        res_json = res.json()
+        if "data" not in res_json or "links" not in res_json:
+            raise ValueError(
+                f"no data returned, are your login details right? Response from FAIRsharing:\n\n  {res_json}\n"
+            )
+        for record in res_json["data"]:
             yv = self._preprocess_record(record)
             if yv:
                 yield yv
