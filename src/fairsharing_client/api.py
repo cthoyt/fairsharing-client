@@ -152,7 +152,7 @@ class FairsharingClient:
             yv = self._preprocess_record(record)
             if yv:
                 yield yv
-        next_url = res["links"].get("next")
+        next_url = res_json["links"].get("next")
         if next_url:
             yield from self._iter_records_helper(next_url)
 
