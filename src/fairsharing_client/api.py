@@ -4,6 +4,7 @@
 """
 
 import json
+import logging
 from collections import defaultdict
 from collections.abc import Iterable, MutableMapping
 from pathlib import Path
@@ -19,6 +20,8 @@ __all__ = [
     "get_fairsharing_to_orcids",
     "load_fairsharing",
 ]
+
+logger = logging.getLogger(__name__)
 
 PATH = pystow.join("bio", "fairsharing", name="fairsharing.json")
 
@@ -124,7 +127,7 @@ class FairsharingClient:
             # Records without a DOI can't be resolved
             url = record["url"]
             if not url.startswith("https://fairsharing.org/fairsharing_records/"):
-                tqdm.write(f"{record['id']} has no DOI: {record['url']}")
+                logger.debug(f"{record['id']} has no DOI: {record['url']}")
             return None
         elif doi.startswith("10.25504/"):
             record["fairsharing_id"] = _removeprefix(doi, "10.25504/")
